@@ -1,0 +1,8 @@
+---
+
+ubuntu_version: "bionic"
+user: "ubuntu"
+
+gitlab_host: "http://gitlab.sujiakeji.com"
+
+workspace: "/home/{{ user }}/workspace"

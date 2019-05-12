@@ -1,0 +1,35 @@
+---
+
+- name: "install packages"
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - "maven"
+
+- name: "copy profile"
+  copy:
+    src: maven.sh
+    dest: /etc/profile.d/maven.sh
+
+- name: "create directory"
+  file:
+    path: "/home/{{ user }}/.m2"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "copy config file to home directory"
+  template:
+    src: settings.xml.j2
+    dest: "/home/{{ user }}/.m2/settings.xml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "copy config file to system directory"
+  template:
+    src: settings.xml.j2
+    dest: "/etc/maven/settings.xml"

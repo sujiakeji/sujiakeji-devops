@@ -1,0 +1,5 @@
+---
+
+ubuntu_version: "bionic"
+user: "ubuntu"
+idea_version: "2018.1"

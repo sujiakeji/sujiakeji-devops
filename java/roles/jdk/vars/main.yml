@@ -1,0 +1,10 @@
+---
+
+ubuntu_version: "bionic"
+user: "ubuntu"
+jdk_version: "8u161"
+jdk_file_base_path: "/tmp"
+jdk_file: "{{ jdk_file_base_path }}/jdk-{{ jdk_version }}-linux-x64.tar.gz"
+java_version: "1.8.0_161"
+java_base_path: "/opt"
+java_path: "{{ java_base_path }}/jdk{{ java_version }}"

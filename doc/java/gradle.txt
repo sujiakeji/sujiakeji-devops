@@ -1,0 +1,57 @@
+# package
+sudo add-apt-repository ppa:cwchien/gradle
+sudo apt-get update && sudo apt-get install gradle
+
+# manual
+# https://gradle.org/gradle-download/
+unzip gradle-4.10.3-bin.zip
+sudo mv gradle-4.10.3 /opt/gradle-4.10.3
+sudo chown -R root:root /opt/gradle-4.10.3
+
+sudo bash -c "cat > /etc/profile.d/gradle.sh" <<"EOF"
+export GRADLE_HOME=/opt/gradle-4.10.3
+export PATH=$GRADLE_HOME/bin:$PATH
+EOF
+
+source /etc/profile.d/gradle.sh
+
+mkdir ~/.gradle
+touch ~/.gradle/gradle.properties
+
+cat >> ~/.gradle/gradle.properties <<"EOF"
+org.gradle.daemon=true
+EOF
+
+./gradlew -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=8118
+
+cat >> ~/.gradle/gradle.properties <<"EOF"
+systemProp.http.proxyHost=127.0.0.1
+systemProp.http.proxyPort=8118
+EOF
+
+gradle tasks
+gradle build
+gradle wrapper
+gradle dependencies
+
+./gradlew tasks
+./gradlew build
+./gradlew run
+
+vi build.gradle
+
+```
+apply plugin: 'maven'
+
+repositories {
+    maven {
+        url "http://localhost:8081/nexus/content/groups/public"
+        credentials {
+            username '<userName>'
+            password '<password>'
+        }
+    }
+    mavenLocal()
+    mavenCentral()
+}
+```

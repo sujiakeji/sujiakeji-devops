@@ -1,0 +1,66 @@
+---
+
+- name: "install packages"
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - "openjdk-8-jdk"
+
+- name: "copy file to remote host"
+  copy:
+    src: "{{ jdk_file }}"
+    dest: "{{ jdk_file }}"
+    force: no
+
+- name: "extract file"
+  unarchive:
+    src: "{{ jdk_file }}"
+    dest: "{{ java_base_path }}"
+    remote_src: yes
+    owner: "root"
+    group: "root"
+    mode: 0755
+
+- name: "link default config"
+  file:
+    src: "{{ java_path }}"
+    dest: "/usr/lib/jvm/default-java"
+    state: link
+    force: yes
+
+- name: "copy profile"
+  copy:
+    src: java.sh
+    dest: /etc/profile.d/java.sh
+
+- name: "update alternatives"
+  shell: |
+    source /etc/profile.d/java.sh
+    update-alternatives --install /usr/bin/java java /usr/lib/jvm/default-java/bin/java 1082
+    update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/default-java/bin/javac 1082
+    update-alternatives --install /usr/bin/javadoc javadoc /usr/lib/jvm/default-java/bin/javadoc 1082
+    update-alternatives --install /usr/bin/javah javah /usr/lib/jvm/default-java/bin/javah 1082
+    update-alternatives --install /usr/bin/javap javap /usr/lib/jvm/default-java/bin/javap 1082
+    update-alternatives --install /usr/bin/javaws javaws /usr/lib/jvm/default-java/bin/javaws 1082
+    update-alternatives --install /usr/bin/jar jar /usr/lib/jvm/default-java/bin/jar 1082
+    update-alternatives --install /usr/bin/jps jps /usr/lib/jvm/default-java/bin/jps 1082
+    update-alternatives --set java /usr/lib/jvm/default-java/bin/java
+    update-alternatives --set javac /usr/lib/jvm/default-java/bin/javac
+    update-alternatives --set javadoc /usr/lib/jvm/default-java/bin/javadoc
+    update-alternatives --set javah /usr/lib/jvm/default-java/bin/javah
+    update-alternatives --set javap /usr/lib/jvm/default-java/bin/javap
+    update-alternatives --set javaws /usr/lib/jvm/default-java/bin/javaws
+    update-alternatives --set jar /usr/lib/jvm/default-java/bin/jar
+    update-alternatives --set jps /usr/lib/jvm/default-java/bin/jps
+  args:
+    warn: false
+
+- name: "check version"
+  command: java -version
+  register: java_current_version
+  changed_when: false
+  failed_when: false
+
+- debug:
+    var: java_current_version

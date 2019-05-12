@@ -1,0 +1,19 @@
+vi ~/software/jetbrains/clion-2018.1/bin/clion64.vmoptions
+```
+-Xms256m
+-Xmx8192m
+```
+
+sudo vi /usr/share/applications/clion-2018.1.desktop
+```
+[Desktop Entry]
+Type=Application
+Name=CLion 2018.1
+Icon=/home/ubuntu/software/jetbrains/clion-2018.1/bin/clion.svg
+Exec=/home/ubuntu/software/jetbrains/clion-2018.1/bin/clion.sh %f
+Categories=Development;IDE;
+Terminal=false
+StartupNotify=true
+StartupWMClass=jetbrains-clion
+```
+

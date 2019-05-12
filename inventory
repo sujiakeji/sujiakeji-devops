@@ -1,0 +1,4 @@
+localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python3"
+
+[server]
+server-001 ansible_python_interpreter="/usr/bin/env python3"

@@ -1,0 +1,80 @@
+---
+
+- name: "copy file to remote host"
+  copy:
+    src: "{{ nexus_file }}"
+    dest: "{{ nexus_file }}"
+    force: no
+
+- name: "create directory"
+  file:
+    path: "{{ nexus_base_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "extract file"
+  unarchive:
+    src: "{{ nexus_file }}"
+    dest: "{{ nexus_base_path }}"
+    remote_src: yes
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "add profile"
+  blockinfile:
+    path: "/home/{{ user }}/.bashrc"
+    block: |
+      export NEXUS_HOME=$HOME/software/nexus-{{ nexus_version }}
+      export PATH=$NEXUS_HOME/bin:$PATH
+
+- name: "start nexus to create config path for step 'copy config file'"
+  shell: |
+    {{ nexus_path }}/bin/nexus start
+  become: true
+  become_user: "{{ user }}"
+  args:
+    warn: false
+
+- name: "check port"
+  wait_for:
+    port: "{{ nexus_port }}"
+    delay: 10
+
+- name: "stop nexus"
+  shell: |
+    {{ nexus_path }}/bin/nexus stop
+  become: true
+  become_user: "{{ user }}"
+  args:
+    warn: false
+
+- name: "check port"
+  wait_for:
+    port: "{{ nexus_port }}"
+    delay: 10
+    state: stopped
+
+- name: "overwrite config file"
+  copy:
+    src: nexus.xml
+    dest: "/home/{{ user }}/software/sonatype-work/nexus/conf/nexus.xml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "start nexus again"
+  shell: |
+    {{ nexus_path }}/bin/nexus start
+  become: true
+  become_user: "{{ user }}"
+  args:
+    warn: false
+
+- name: "check port"
+  wait_for:
+    port: "{{ nexus_port }}"
+    delay: 10

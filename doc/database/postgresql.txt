@@ -1,0 +1,35 @@
+echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' | \
+sudo tee /etc/apt/sources.list.d/postgresql.list
+
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+sudo apt-get update
+
+sudo apt-get install postgresql-9.6 postgresql-client-9.6 \
+  postgresql-contrib-9.6 postgresql-server-dev-9.6 libpq-dev
+
+sudo -u postgres -i
+$ createuser <username> -s --password
+$ createdb -E utf8 -O <username> <db_name>
+$ exit
+
+sudo -u postgres psql
+postgres=# \l
+postgres=# ALTER USER postgres WITH PASSWORD 'postgres';
+postgres=# ALTER USER <username> WITH PASSWORD '<password>';
+postgres=# DROP DATABASE <db_name>;
+
+sudo -u postgres psql <db_name> < schema.sql
+
+sudo -u postgres psql <db_name>
+postgres=# \password <username>
+postgres=# \c <db_name>
+postgres=# \dt
+postgres=# \d <table_name>
+postgres=# select * from <table_name>;
+postgres=# \q
+
+psql -h localhost -U <username> -d <db_name> -W
+
+sudo vi /etc/postgresql/9.6/main/pg_hba.conf
+

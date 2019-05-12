@@ -1,0 +1,51 @@
+---
+
+- include_tasks: mysql.yml
+- include_tasks: rabbitmq.yml
+
+- name: "create user project directory"
+  file:
+    path: "{{ workspace }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "download user project"
+  git:
+    repo: "{{ gitlab_host }}/{{ gitlab_group }}/{{ project_name }}.git"
+    dest: "{{ project_path }}"
+    force: yes
+  become: true
+  become_user: "{{ user }}"
+
+- name: "build user project"
+  shell: |
+    cd {{ project_path }}
+    ./gradlew clean build copyJar docker -x test
+  become: true
+  become_user: "{{ user }}"
+  args:
+    warn: false
+
+- name: "create user container"
+  docker_container:
+    name: "{{ project_name }}"
+    image: "sujiakeji/{{ project_name }}"
+    ports:
+      - "10200:10200"
+    links:
+      - "sujiakeji-eureka-server"
+      - "sujiakeji-mysql"
+      - "sujiakeji-rabbitmq"
+    env:
+      EUREKA_SERVER_HOST: "sujiakeji-eureka-server"
+      EUREKA_SERVER_PORT: "9100"
+      MYSQL_HOST: "sujiakeji-mysql"
+      MYSQL_PORT: "3306"
+      RABBITMQ_HOST: "sujiakeji-rabbitmq"
+      RABBITMQ_PORT: "5672"
+      STORAGE_HOST: "sujiakeji-storage"
+      STORAGE_PORT: "10000"
+      SPRING_PROFILES_ACTIVE: "dev"

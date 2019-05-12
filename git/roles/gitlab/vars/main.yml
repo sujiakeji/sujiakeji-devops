@@ -1,0 +1,8 @@
+---
+
+ubuntu_version: "bionic"
+user: "ubuntu"
+
+gitlab_data_path: "/data/gitlab"
+gitlab_host: "server-001"
+gitlab_port: "8929"

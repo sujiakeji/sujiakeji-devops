@@ -1,0 +1,14 @@
+---
+
+- name: "create rabbitmq container"
+  docker_container:
+    name: "sujiakeji-rabbitmq"
+    image: "rabbitmq:3-management-alpine"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - "/data/docker/mysql:/var/lib/mysql"
+    env:
+      RABBITMQ_DEFAULT_USER: "dev"
+      RABBITMQ_DEFAULT_PASS: "dev"

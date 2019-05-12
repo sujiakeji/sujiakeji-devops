@@ -1,0 +1,19 @@
+---
+
+- name: "install packages"
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - "vim"
+      - "vim-scripts"
+      - "exuberant-ctags"
+      - "cscope"
+
+- name: "copy config file"
+  copy:
+    src: vimrc
+    dest: "/home/{{ user }}/.vimrc"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755

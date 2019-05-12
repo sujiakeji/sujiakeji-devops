@@ -1,0 +1,47 @@
+---
+
+- name: "create docker registry data directory"
+  file:
+    path: "{{ registry_data_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "docker"
+
+- name: "create registry network"
+  docker_network:
+    name: "{{ registry_network }}"
+
+- name: "create docker registry container"
+  docker_container:
+    name: "{{ registry_name }}"
+    image: "registry:2"
+    networks:
+      - name: "{{ registry_network }}"
+    ports:
+      - "{{ registry_port }}:{{ registry_port }}"
+    volumes:
+      - "{{ registry_data_path }}:/var/lib/registry"
+    env:
+      REGISTRY_HTTP_ADDR: "{{ registry_host }}:{{ registry_port }}"
+
+- name: "check registry port"
+  wait_for:
+    port: "{{ registry_port }}"
+    delay: 10
+
+- name: "create docker registry ui container"
+  docker_container:
+    name: "{{ registry_ui_name }}"
+    image: "joxit/docker-registry-ui:static"
+    networks:
+      - name: "{{ registry_network }}"
+    ports:
+      - "{{ registry_ui_port }}:80"
+    env:
+      REGISTRY_URL: "http://{{ registry_name }}:{{ registry_port }}"
+
+- name: "check registry ui port"
+  wait_for:
+    port: "{{ registry_ui_port }}"
+    delay: 10

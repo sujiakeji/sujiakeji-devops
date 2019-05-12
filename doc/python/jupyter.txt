@@ -1,0 +1,11 @@
+sudo pip3 install -U ipython jupyter jupyter_console
+
+jupyter notebook
+
+# http://localhost:8888/tree
+
+for i in *.ipynb **/*.ipynb; do 
+  echo "$i"
+  jupyter nbconvert --to python "$i"
+done
+

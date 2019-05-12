@@ -1,0 +1,28 @@
+---
+
+- name: "create gitlab data directory"
+  file:
+    path: "{{ gitlab_data_path }}/{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "docker"
+  with_items: ["config", "logs", "data"]
+
+- name: "create gitlab container"
+  docker_container:
+    name: "sujiakeji-gitlab"
+    image: "gitlab/gitlab-ce"
+    ports:
+      - "{{ gitlab_port }}:{{ gitlab_port }}"
+    volumes:
+      - "{{ gitlab_data_path }}/config:/etc/gitlab"
+      - "{{ gitlab_data_path }}/logs:/var/log/gitlab"
+      - "{{ gitlab_data_path }}/data:/var/opt/gitlab"
+    env:
+      GITLAB_OMNIBUS_CONFIG: "external_url 'http://{{ gitlab_host }}:{{ gitlab_port }}';"
+
+- name: "check port"
+  wait_for:
+    port: "{{ gitlab_port }}"
+    delay: 10

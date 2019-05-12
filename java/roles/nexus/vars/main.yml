@@ -1,0 +1,11 @@
+---
+
+ubuntu_version: "bionic"
+user: "ubuntu"
+nexus_version: "2.14.1-01"
+nexus_file_base_path: "/tmp"
+nexus_file: "{{ nexus_file_base_path }}/nexus-{{ nexus_version }}-bundle.zip"
+nexus_base_path: "/home/{{ user }}/software"
+nexus_path: "{{ nexus_base_path }}/nexus-{{ nexus_version }}"
+nexus_host: "localhost"
+nexus_port: 8081

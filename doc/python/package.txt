@@ -1,0 +1,10 @@
+sudo apt-get install build-essential libffi-dev python3-dev
+
+sudo pip3 install -U bcrypt
+
+sudo apt-get install python-imaging python-pil
+
+sudo pip3 install -U pillow
+
+sudo pip3 install -U Celery
+

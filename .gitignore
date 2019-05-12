@@ -1,0 +1,15 @@
+build/
+log/
+.gradle/
+.idea/
+.settings/
+.vscode/
+.DS_Store
+.project
+*.iml
+*.ipr
+*.iws
+*.log
+*.retry
+*/__pycache__
+*.pyc

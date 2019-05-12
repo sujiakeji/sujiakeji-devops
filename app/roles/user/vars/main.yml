@@ -1,0 +1,13 @@
+---
+
+ubuntu_version: "bionic"
+user: "ubuntu"
+
+gitlab_host: "http://gitlab.sujiakeji.com"
+gitlab_group: "sujiakeji"
+
+workspace: "/home/{{ user }}/workspace"
+project_name: "sujiakeji-user"
+project_path: "{{ workspace }}/{{ project_name }}"
+
+mysql_data_path: "/data/mysql"

@@ -1,0 +1,36 @@
+---
+
+- name: "create eureka-server project directory"
+  file:
+    path: "{{ workspace }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "download eureka-server project"
+  git:
+    repo: "{{ gitlab_host }}/{{ gitlab_group }}/{{ project_name }}.git"
+    dest: "{{ project_path }}"
+    force: yes
+  become: true
+  become_user: "{{ user }}"
+
+- name: "build eureka-server project"
+  shell: |
+    cd {{ project_path }}
+    ./gradlew clean build copyJar docker -x test
+  become: true
+  become_user: "{{ user }}"
+  args:
+    warn: false
+
+- name: "create eureka-server container"
+  docker_container:
+    name: "{{ project_name }}"
+    image: "sujiakeji/{{ project_name }}"
+    ports:
+      - "9100:9100"
+    env:
+      SPRING_PROFILES_ACTIVE: "dev"

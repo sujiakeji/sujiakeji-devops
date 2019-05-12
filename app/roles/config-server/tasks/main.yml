@@ -1,0 +1,40 @@
+---
+
+- name: "create config-server project directory"
+  file:
+    path: "{{ workspace }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+
+- name: "download config-server project"
+  git:
+    repo: "{{ gitlab_host }}/{{ gitlab_group }}/{{ project_name }}.git"
+    dest: "{{ project_path }}"
+    force: yes
+  become: true
+  become_user: "{{ user }}"
+
+- name: "build config-server project"
+  shell: |
+    cd {{ project_path }}
+    ./gradlew clean build copyJar docker -x test
+  become: true
+  become_user: "{{ user }}"
+  args:
+    warn: false
+
+- name: "create config-server container"
+  docker_container:
+    name: "{{ project_name }}"
+    image: "sujiakeji/{{ project_name }}"
+    ports:
+      - "9000:9000"
+    links:
+      - "sujiakeji-eureka-server"
+    env:
+      EUREKA_SERVER_HOST: "sujiakeji-eureka-server"
+      EUREKA_SERVER_PORT: "9100"
+      SPRING_PROFILES_ACTIVE: "dev"

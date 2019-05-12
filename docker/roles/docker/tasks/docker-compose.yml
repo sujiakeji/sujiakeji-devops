@@ -1,0 +1,30 @@
+---
+
+- name: "check docker-compose current version"
+  command: docker-compose --version
+  register: docker_compose_current_version
+  changed_when: false
+  failed_when: false
+
+- debug:
+    var: docker_compose_current_version
+
+- name: "delete existing docker-compose file if different"
+  file:
+    path: "{{ docker_compose_path }}"
+    state: absent
+  when: >
+    docker_compose_current_version.stdout is defined
+    and docker_compose_version not in docker_compose_current_version.stdout
+
+- name: "download docker-compose file"
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+    dest: "{{ docker_compose_path }}"
+    mode: 0755
+
+- name: "install docker-compose python package"
+  shell: |
+    pip3 install docker-compose
+  args:
+    warn: false

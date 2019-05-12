@@ -1,0 +1,9 @@
+---
+
+- hosts: server
+  vars:
+    ansible_python_interpreter: "/usr/bin/env python3"
+  roles:
+  - role: jdk
+  - role: nexus
+  - role: maven
