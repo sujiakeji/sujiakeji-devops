@@ -27,7 +27,7 @@
   git_config:
     name: user.name
     scope: global
-    value: server
+    value: test
   become: true
   become_user: "{{ user }}"
 
@@ -35,6 +35,6 @@
   git_config:
     name: user.email
     scope: global
-    value: server@sujiakeji.com
+    value: test@sujiakeji.com
   become: true
   become_user: "{{ user }}"

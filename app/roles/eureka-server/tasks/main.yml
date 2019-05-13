@@ -28,9 +28,9 @@
 
 - name: "create eureka-server container"
   docker_container:
-    name: "{{ project_name }}"
-    image: "sujiakeji/{{ project_name }}"
+    name: "{{ container_name }}"
+    image: "{{ organization }}/{{ project_name }}"
     ports:
-      - "9100:9100"
+      - "{{ container_port }}:{{ container_port }}"
     env:
       SPRING_PROFILES_ACTIVE: "dev"
